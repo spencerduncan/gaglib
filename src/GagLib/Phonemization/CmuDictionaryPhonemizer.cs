@@ -40,13 +40,6 @@ public partial class CmuDictionaryPhonemizer : IPhonemizer
             : Array.Empty<Phoneme>();
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<IReadOnlyList<Phoneme>> PhonemizeSentence(string text)
-    {
-        var words = TokenizeText(text);
-        return words.Select(Phonemize).ToList().AsReadOnly();
-    }
-
     private void LoadDictionary()
     {
         var assembly = Assembly.GetExecutingAssembly();
@@ -107,11 +100,6 @@ public partial class CmuDictionaryPhonemizer : IPhonemizer
         // Strip punctuation, normalize case
         var normalized = PunctuationRegex().Replace(word, "");
         return normalized.Trim().ToUpperInvariant();
-    }
-
-    private static IEnumerable<string> TokenizeText(string text)
-    {
-        return text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
     }
 
     [GeneratedRegex(@"\(\d+\)$")]

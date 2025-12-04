@@ -64,11 +64,4 @@ public class CompositePhonemizer : IPhonemizer
         }
         return Array.Empty<Phoneme>();
     }
-
-    /// <inheritdoc />
-    public IReadOnlyList<IReadOnlyList<Phoneme>> PhonemizeSentence(string text)
-    {
-        var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return words.Select(Phonemize).ToList().AsReadOnly();
-    }
 }

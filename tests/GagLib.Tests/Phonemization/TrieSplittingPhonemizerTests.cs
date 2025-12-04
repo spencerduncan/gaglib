@@ -77,16 +77,6 @@ public class TrieSplittingPhonemizerTests
     }
 
     [Fact]
-    public void PhonemizeSentence_ProcessesEachWord()
-    {
-        var result = _splitter.PhonemizeSentence("hello world");
-
-        result.Should().HaveCount(2);
-        result[0].Should().NotBeEmpty();
-        result[1].Should().NotBeEmpty();
-    }
-
-    [Fact]
     public void Phonemize_Gibberish_SplitsIntoLetters()
     {
         // Single letters are in the dictionary, so gibberish gets split letter by letter

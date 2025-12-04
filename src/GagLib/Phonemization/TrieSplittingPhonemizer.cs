@@ -66,13 +66,6 @@ public class TrieSplittingPhonemizer : IPhonemizer
         return Array.Empty<Phoneme>();
     }
 
-    /// <inheritdoc />
-    public IReadOnlyList<IReadOnlyList<Phoneme>> PhonemizeSentence(string text)
-    {
-        var words = text.Split(' ', StringSplitOptions.RemoveEmptyEntries);
-        return words.Select(Phonemize).ToList().AsReadOnly();
-    }
-
     private IReadOnlyList<Phoneme> PhonemizeHyphenated(string word)
     {
         var parts = word.Split('-', StringSplitOptions.RemoveEmptyEntries);

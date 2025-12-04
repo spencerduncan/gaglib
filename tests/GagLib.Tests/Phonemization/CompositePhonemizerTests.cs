@@ -46,16 +46,4 @@ public class CompositePhonemizerTests
         // HeuristicPhonemizer.CanPhonemize returns true for any non-empty string
         composite.CanPhonemize("xyzzy").Should().BeTrue();
     }
-
-    [Fact]
-    public void PhonemizeSentence_ProcessesAllWords()
-    {
-        var composite = CompositePhonemizer.CreateDefault();
-
-        var result = composite.PhonemizeSentence("hello world");
-
-        result.Should().HaveCount(2);
-        result[0].Should().NotBeEmpty();
-        result[1].Should().NotBeEmpty();
-    }
 }

@@ -69,21 +69,6 @@ public class CmuDictionaryPhonemizerTests
     }
 
     [Fact]
-    public void PhonemizeSentence_ReturnsPhonemesPerWord()
-    {
-        var phonemizer = new CmuDictionaryPhonemizer();
-
-        // "a" = 1, "big" = 3, "hello" = 4, "beautiful" = 8
-        var result = phonemizer.PhonemizeSentence("a big hello beautiful");
-
-        result.Should().HaveCount(4);
-        result[0].Should().HaveCount(1);  // a: AH
-        result[1].Should().HaveCount(3);  // big: B IH G
-        result[2].Should().HaveCount(4);  // hello: HH AH L OW
-        result[3].Should().HaveCount(8);  // beautiful: B Y UW T AH F AH L
-    }
-
-    [Fact]
     public void Phonemize_StripsPunctuation()
     {
         var phonemizer = new CmuDictionaryPhonemizer();
