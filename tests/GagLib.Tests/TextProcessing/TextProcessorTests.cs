@@ -146,4 +146,50 @@ public class TextProcessorTests
         var there = words.First(w => w.OriginalText.Equals("there", StringComparison.OrdinalIgnoreCase));
         there.Phonemes.Should().Contain(Phoneme.DH);
     }
+
+    [Fact]
+    public void Process_MadeUpWord_FallsBackToHeuristic()
+    {
+        var processor = TextProcessor.CreateDefault();
+
+        // "blorphing" is not in CMU dictionary, can't be split, so heuristic handles it
+        var result = processor.Process("I am blorphing!");
+
+        var words = result.Where(t => t.Type == TextTokenType.Word).ToList();
+        words.Should().HaveCount(3); // I, am, blorphing
+
+        var blorphing = words.First(w => w.OriginalText.Equals("blorphing", StringComparison.OrdinalIgnoreCase));
+        blorphing.Phonemes.Should().NotBeEmpty();
+        blorphing.Phonemes.Should().Contain(Phoneme.B);   // b
+        blorphing.Phonemes.Should().Contain(Phoneme.L);   // l
+        blorphing.Phonemes.Should().Contain(Phoneme.NG);  // ing pattern
+    }
+
+    [Fact]
+    public void Process_AllThreePhonemizers_EndToEnd()
+    {
+        var processor = TextProcessor.CreateDefault();
+
+        // "hello" = dictionary, "sunlight" = trie split (sun+light), "zxqvian" = heuristic
+        var result = processor.Process("hello sunlight zxqvian");
+
+        var words = result.Where(t => t.Type == TextTokenType.Word).ToList();
+        words.Should().HaveCount(3);
+
+        // Dictionary lookup
+        var hello = words[0];
+        hello.Phonemes.Should().Contain(Phoneme.HH);
+        hello.Phonemes.Should().Contain(Phoneme.OW);
+
+        // Trie splitting (sun + light)
+        var sunlight = words[1];
+        sunlight.Phonemes.Should().NotBeEmpty();
+        sunlight.Phonemes.Should().Contain(Phoneme.S);  // sun
+        sunlight.Phonemes.Should().Contain(Phoneme.AY); // light
+
+        // Heuristic fallback
+        var zxqvian = words[2];
+        zxqvian.Phonemes.Should().NotBeEmpty();
+        zxqvian.Phonemes.Should().Contain(Phoneme.Z);
+    }
 }
