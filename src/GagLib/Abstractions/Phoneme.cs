@@ -62,38 +62,3 @@ public enum Phoneme
     W,   // we
     Y,   // yield
 }
-
-/// <summary>
-/// Extension methods for phoneme classification.
-/// </summary>
-public static class PhonemeExtensions
-{
-    private static readonly HashSet<Phoneme> Vowels = new()
-    {
-        Phoneme.AA, Phoneme.AE, Phoneme.AH, Phoneme.AO, Phoneme.EH,
-        Phoneme.ER, Phoneme.IH, Phoneme.IY, Phoneme.UH, Phoneme.UW,
-        Phoneme.AW, Phoneme.AY, Phoneme.EY, Phoneme.OW, Phoneme.OY
-    };
-
-    private static readonly HashSet<Phoneme> Nasals = new()
-    {
-        Phoneme.M, Phoneme.N, Phoneme.NG
-    };
-
-    private static readonly HashSet<Phoneme> Stops = new()
-    {
-        Phoneme.B, Phoneme.D, Phoneme.G, Phoneme.K, Phoneme.P, Phoneme.T
-    };
-
-    private static readonly HashSet<Phoneme> Fricatives = new()
-    {
-        Phoneme.DH, Phoneme.F, Phoneme.HH, Phoneme.S, Phoneme.SH,
-        Phoneme.TH, Phoneme.V, Phoneme.Z, Phoneme.ZH
-    };
-
-    public static bool IsVowel(this Phoneme phoneme) => Vowels.Contains(phoneme);
-    public static bool IsNasal(this Phoneme phoneme) => Nasals.Contains(phoneme);
-    public static bool IsStop(this Phoneme phoneme) => Stops.Contains(phoneme);
-    public static bool IsFricative(this Phoneme phoneme) => Fricatives.Contains(phoneme);
-    public static bool IsConsonant(this Phoneme phoneme) => !Vowels.Contains(phoneme);
-}
