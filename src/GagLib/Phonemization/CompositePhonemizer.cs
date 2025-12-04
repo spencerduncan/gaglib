@@ -30,7 +30,7 @@ public class CompositePhonemizer : IPhonemizer
     /// <param name="phonemizers">The phonemizers to try in order.</param>
     public CompositePhonemizer(params IPhonemizer[] phonemizers)
     {
-        _phonemizers = phonemizers.ToList().AsReadOnly();
+        _phonemizers = phonemizers;
     }
 
     /// <summary>
@@ -39,7 +39,7 @@ public class CompositePhonemizer : IPhonemizer
     /// <param name="phonemizers">The phonemizers to try in order.</param>
     public CompositePhonemizer(IEnumerable<IPhonemizer> phonemizers)
     {
-        _phonemizers = phonemizers.ToList().AsReadOnly();
+        _phonemizers = [.. phonemizers];
     }
 
     /// <inheritdoc />
@@ -62,6 +62,6 @@ public class CompositePhonemizer : IPhonemizer
                 }
             }
         }
-        return Array.Empty<Phoneme>();
+        return [];
     }
 }

@@ -21,9 +21,9 @@ public partial class TextTokenizer : ITextTokenizer
     public IReadOnlyList<TextToken> Tokenize(string text)
     {
         if (string.IsNullOrEmpty(text))
-            return Array.Empty<TextToken>();
+            return [];
 
-        var tokens = new List<TextToken>();
+        List<TextToken> tokens = [];
         var position = 0;
 
         while (position < text.Length)
@@ -47,7 +47,7 @@ public partial class TextTokenizer : ITextTokenizer
             }
         }
 
-        return tokens.AsReadOnly();
+        return [.. tokens];
     }
 
     private static (TextToken? token, int length) TryMatchPattern(string text, int position)
@@ -161,8 +161,10 @@ public partial class TextTokenizer : ITextTokenizer
             return (char)('A' + (codePoint - 0x1F170));
 
         // Special cases
-        if (codePoint == 0x1F17E) return 'O';  // 🅾
-        if (codePoint == 0x1F17F) return 'P';  // 🅿
+        if (codePoint == 0x1F17E)
+            return 'O';  // 🅾
+        if (codePoint == 0x1F17F)
+            return 'P';  // 🅿
 
         return null;
     }
@@ -207,30 +209,40 @@ public partial class TextTokenizer : ITextTokenizer
     private static bool IsBmpEmoji(char c)
     {
         // Miscellaneous Symbols (U+2600-U+26FF)
-        if (c >= '\u2600' && c <= '\u26FF') return true;
+        if (c >= '\u2600' && c <= '\u26FF')
+            return true;
         // Dingbats (U+2700-U+27BF)
-        if (c >= '\u2700' && c <= '\u27BF') return true;
+        if (c >= '\u2700' && c <= '\u27BF')
+            return true;
         return false;
     }
 
     private static bool IsSurrogateEmoji(int codePoint)
     {
         // Skip letter-like emoji (handled separately)
-        if (codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF) return false;  // Regional indicators
-        if (codePoint >= 0x1F170 && codePoint <= 0x1F19A) return false;  // Enclosed alphanumerics
+        if (codePoint >= 0x1F1E6 && codePoint <= 0x1F1FF)
+            return false;  // Regional indicators
+        if (codePoint >= 0x1F170 && codePoint <= 0x1F19A)
+            return false;  // Enclosed alphanumerics
 
         // Miscellaneous Symbols and Pictographs (U+1F300-U+1F5FF)
-        if (codePoint >= 0x1F300 && codePoint <= 0x1F5FF) return true;
+        if (codePoint >= 0x1F300 && codePoint <= 0x1F5FF)
+            return true;
         // Emoticons (U+1F600-U+1F64F)
-        if (codePoint >= 0x1F600 && codePoint <= 0x1F64F) return true;
+        if (codePoint >= 0x1F600 && codePoint <= 0x1F64F)
+            return true;
         // Transport and Map Symbols (U+1F680-U+1F6FF)
-        if (codePoint >= 0x1F680 && codePoint <= 0x1F6FF) return true;
+        if (codePoint >= 0x1F680 && codePoint <= 0x1F6FF)
+            return true;
         // Supplemental Symbols and Pictographs (U+1F900-U+1F9FF)
-        if (codePoint >= 0x1F900 && codePoint <= 0x1F9FF) return true;
+        if (codePoint >= 0x1F900 && codePoint <= 0x1F9FF)
+            return true;
         // Chess Symbols, Extended-A (U+1FA00-U+1FA6F)
-        if (codePoint >= 0x1FA00 && codePoint <= 0x1FA6F) return true;
+        if (codePoint >= 0x1FA00 && codePoint <= 0x1FA6F)
+            return true;
         // Symbols and Pictographs Extended-A (U+1FA70-U+1FAFF)
-        if (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF) return true;
+        if (codePoint >= 0x1FA70 && codePoint <= 0x1FAFF)
+            return true;
 
         return false;
     }

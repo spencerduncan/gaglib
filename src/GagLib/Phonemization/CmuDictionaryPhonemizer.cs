@@ -9,7 +9,7 @@ namespace GagLib.Phonemization;
 /// </summary>
 public partial class CmuDictionaryPhonemizer : IPhonemizer
 {
-    private readonly Dictionary<string, List<Phoneme>> _dictionary = new(StringComparer.OrdinalIgnoreCase);
+    private readonly Dictionary<string, Phoneme[]> _dictionary = new(StringComparer.OrdinalIgnoreCase);
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CmuDictionaryPhonemizer"/> class.
@@ -36,8 +36,8 @@ public partial class CmuDictionaryPhonemizer : IPhonemizer
     {
         var normalized = NormalizeWord(word);
         return _dictionary.TryGetValue(normalized, out var phonemes)
-            ? phonemes.AsReadOnly()
-            : Array.Empty<Phoneme>();
+            ? phonemes
+            : [];
     }
 
     private void LoadDictionary()
@@ -72,7 +72,7 @@ public partial class CmuDictionaryPhonemizer : IPhonemizer
         if (AlternatePronunciationRegex().IsMatch(word))
             return;
 
-        var phonemes = new List<Phoneme>();
+        List<Phoneme> phonemes = [];
         for (int i = 1; i < parts.Length; i++)
         {
             if (TryParsePhoneme(parts[i], out var phoneme))
@@ -83,7 +83,7 @@ public partial class CmuDictionaryPhonemizer : IPhonemizer
 
         if (phonemes.Count > 0)
         {
-            _dictionary[word] = phonemes;
+            _dictionary[word] = [.. phonemes];
         }
     }
 

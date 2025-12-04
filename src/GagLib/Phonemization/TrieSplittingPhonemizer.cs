@@ -48,7 +48,7 @@ public class TrieSplittingPhonemizer : IPhonemizer
     {
         var normalized = NormalizeWord(word);
         if (string.IsNullOrEmpty(normalized))
-            return Array.Empty<Phoneme>();
+            return [];
 
         // Handle hyphens first - split and process each part
         if (normalized.Contains('-'))
@@ -63,13 +63,13 @@ public class TrieSplittingPhonemizer : IPhonemizer
             return result.Phonemes;
         }
 
-        return Array.Empty<Phoneme>();
+        return [];
     }
 
     private IReadOnlyList<Phoneme> PhonemizeHyphenated(string word)
     {
         var parts = word.Split('-', StringSplitOptions.RemoveEmptyEntries);
-        var allPhonemes = new List<Phoneme>();
+        List<Phoneme> allPhonemes = [];
 
         foreach (var part in parts)
         {
@@ -77,7 +77,7 @@ public class TrieSplittingPhonemizer : IPhonemizer
             allPhonemes.AddRange(phonemes);
         }
 
-        return allPhonemes.AsReadOnly();
+        return [.. allPhonemes];
     }
 
     private SplitResult FindBestSplit(string text)
@@ -192,8 +192,8 @@ public class TrieSplittingPhonemizer : IPhonemizer
 
     private readonly struct SplitResult
     {
-        public static readonly SplitResult Empty = new(Array.Empty<Phoneme>(), 0);
-        public static readonly SplitResult Failed = new(Array.Empty<Phoneme>(), int.MaxValue);
+        public static readonly SplitResult Empty = new([], 0);
+        public static readonly SplitResult Failed = new([], int.MaxValue);
 
         public IReadOnlyList<Phoneme> Phonemes { get; }
         public int SegmentCount { get; }

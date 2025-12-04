@@ -19,6 +19,6 @@ public class HeuristicPhonemizer : IPhonemizer
     {
         // TODO: Implement letter-to-phoneme heuristics
         // Basic approach: map common letter patterns to phonemes
-        return Array.Empty<Phoneme>();
+        return [];
     }
 }

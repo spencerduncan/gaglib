@@ -36,7 +36,7 @@ public class TextProcessor : ITextProcessor
     public IReadOnlyList<TextToken> Process(string text)
     {
         if (string.IsNullOrEmpty(text))
-            return Array.Empty<TextToken>();
+            return [];
 
         var tokens = _tokenizer.Tokenize(text);
 

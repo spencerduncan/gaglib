@@ -106,7 +106,7 @@ public class WordTrie
 
         var normalized = text.ToUpperInvariant();
         var node = _root;
-        var prefixes = new List<string>();
+        List<string> prefixes = [];
         var currentPrefix = new System.Text.StringBuilder();
 
         foreach (var c in normalized)
