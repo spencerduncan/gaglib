@@ -3,7 +3,7 @@
   "configurations": [
     {
       "name": "Debug Tests",
-      "type": "node",
+      "type": "coreclr",
       "request": "launch",
       "preLaunchTask": "build",
       "program": "dotnet",
