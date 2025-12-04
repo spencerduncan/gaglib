@@ -1,5 +1,9 @@
 # GagLib
 
+[![CI](https://github.com/spencerduncan/gaglib/actions/workflows/ci.yml/badge.svg)](https://github.com/spencerduncan/gaglib/actions/workflows/ci.yml)
+[![codecov](https://codecov.io/gh/spencerduncan/gaglib/graph/badge.svg)](https://codecov.io/gh/spencerduncan/gaglib)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Speech-to-muffled-speech transformer for Discord bots. Converts text to phonemes, then mangles them like you're talking through a ball gag. Extendable to add other types of gags/speech transformations.
 
 ## Usage

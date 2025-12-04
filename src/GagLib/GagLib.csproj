@@ -4,6 +4,17 @@
     <RootNamespace>GagLib</RootNamespace>
     <AssemblyName>GagLib</AssemblyName>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+
+    <!-- NuGet package metadata -->
+    <PackageId>GagLib</PackageId>
+    <Version>0.0.1</Version>
+    <Authors>penny</Authors>
+    <Description>Speech-to-muffled-speech transformer for Discord bots. Converts text to phonemes, then mangles them like you're talking through a ball gag.</Description>
+    <PackageTags>speech;phonemes;discord;text-transform</PackageTags>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageProjectUrl>https://github.com/spencerduncan/gaglib</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/spencerduncan/gaglib</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
 
   <ItemGroup>
