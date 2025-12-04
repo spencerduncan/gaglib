@@ -3,7 +3,7 @@
   "tasks": [
     {
       "label": "build",
-      "command": "dotnet",
+      "command": "${env:HOME}/.dotnet/dotnet",
       "type": "process",
       "args": [
         "build",
@@ -19,7 +19,7 @@
     },
     {
       "label": "test",
-      "command": "dotnet",
+      "command": "${env:HOME}/.dotnet/dotnet",
       "type": "process",
       "args": [
         "test",
@@ -35,7 +35,7 @@
     },
     {
       "label": "watch",
-      "command": "dotnet",
+      "command": "${env:HOME}/.dotnet/dotnet",
       "type": "process",
       "args": [
         "watch",
@@ -48,7 +48,7 @@
     },
     {
       "label": "clean",
-      "command": "dotnet",
+      "command": "${env:HOME}/.dotnet/dotnet",
       "type": "process",
       "args": [
         "clean",
