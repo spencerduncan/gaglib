@@ -1,0 +1,6 @@
+{
+  "dotnet.defaultSolution": "GagLib.sln",
+  "editor.formatOnSave": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableRoslynAnalyzers": true
+}
