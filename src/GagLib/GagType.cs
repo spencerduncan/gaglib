@@ -18,5 +18,10 @@ public enum GagType
     /// <summary>
     /// Dog gag - cartoon dog style speech (ruh-roh!).
     /// </summary>
-    DogGag
+    DogGag,
+
+    /// <summary>
+    /// Barking dog gag - transforms speech into barks (ruff, woof, arf, bark, grr).
+    /// </summary>
+    BarkingDogGag
 }

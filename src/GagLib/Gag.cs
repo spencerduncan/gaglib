@@ -14,6 +14,7 @@ public static class Gag
     private static readonly BallGagTransformer BallGag = new();
     private static readonly CowGagTransformer CowGag = new();
     private static readonly DogGagTransformer DogGag = new();
+    private static readonly BarkingDogGagTransformer BarkingDogGag = new();
 
     /// <summary>
     /// Transforms a message as if spoken through a gag.
@@ -40,6 +41,7 @@ public static class Gag
             GagType.BallGag => BallGag,
             GagType.CowGag => CowGag,
             GagType.DogGag => DogGag,
+            GagType.BarkingDogGag => BarkingDogGag,
             _ => throw new ArgumentOutOfRangeException(nameof(gagType), gagType, "Unknown gag type")
         };
     }
