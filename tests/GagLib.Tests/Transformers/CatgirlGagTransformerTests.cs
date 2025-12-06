@@ -7,7 +7,8 @@ namespace GagLib.Tests.Transformers;
 
 public class CatgirlGagTransformerTests
 {
-    private readonly CatgirlGagTransformer _transformer = new();
+    // Use seeded random for deterministic tests
+    private readonly CatgirlGagTransformer _transformer = new(new Random(42));
 
     [Fact]
     public void Name_ReturnsCatgirlGag()
@@ -22,64 +23,81 @@ public class CatgirlGagTransformerTests
     }
 
     [Fact]
-    public void Transform_ShortVowel_ReturnsNyaWithTilde()
+    public void Transform_MagicPattern_BecomesNya()
     {
-        // Short vowels (IH, EH, AE, AH, UH, AA, ER) -> nya
-        var phonemes = new[] { Phoneme.AH };
+        // M + A-type vowel at start → "nya" (magic → nyagic)
+        var phonemes = new[] { Phoneme.M, Phoneme.AE, Phoneme.JH, Phoneme.IH, Phoneme.K };
         var result = _transformer.Transform(phonemes);
 
-        result.Should().Be("nya~");
+        result.Should().StartWith("nya");
     }
 
     [Fact]
-    public void Transform_LongVowel_ReturnsNyaaWithTilde()
+    public void Transform_YouPattern_BecomesMew()
     {
-        // Long vowels (IY, UW, OW, EY, AY, AW, OY, AO) -> nyaa
-        var phonemes = new[] { Phoneme.OW };
+        // Y + U-type vowel → "mew" (you → mew)
+        var phonemes = new[] { Phoneme.Y, Phoneme.UW };
         var result = _transformer.Transform(phonemes);
 
-        result.Should().Be("nyaa~");
+        result.Should().Contain("mew");
     }
 
     [Fact]
-    public void Transform_MultipleSyllables_ConcatenatesNyas()
+    public void Transform_ApplePattern_NyaPrefix()
     {
-        // "hello" = HH EH L OW -> two syllables (nya + nyaa)
-        var phonemes = new[] { Phoneme.HH, Phoneme.EH, Phoneme.L, Phoneme.OW };
+        // Word starting with A-type vowel → "nya" prefix
+        var phonemes = new[] { Phoneme.AE, Phoneme.P, Phoneme.AH, Phoneme.L };
         var result = _transformer.Transform(phonemes);
 
-        result.Should().Be("nyanyaa~");
+        result.Should().StartWith("nya");
     }
 
     [Fact]
-    public void Transform_OnlyConsonants_ReturnsNya()
+    public void Transform_NothingPattern_NyVowel()
     {
-        var phonemes = new[] { Phoneme.S, Phoneme.T };
+        // N + vowel → "ny" + vowel sound
+        var phonemes = new[] { Phoneme.N, Phoneme.AH, Phoneme.TH, Phoneme.IH, Phoneme.NG };
         var result = _transformer.Transform(phonemes);
 
-        result.Should().Be("nya");
+        result.Should().StartWith("ny");
     }
 
     [Fact]
-    public void Transform_AlwaysEndsWithTilde()
+    public void Transform_NoTriggers_KeepsStructure()
     {
-        var phonemes = new[] { Phoneme.IY, Phoneme.AH, Phoneme.OW };
+        // Words without triggers keep their structure
+        var phonemes = new[] { Phoneme.W, Phoneme.ER, Phoneme.L, Phoneme.D };
         var result = _transformer.Transform(phonemes);
 
-        result.Should().EndWith("~");
+        // Should be phonetic approximation, not heavily transformed
+        result.Should().Contain("er");
+        result.Should().Contain("l");
     }
 
     [Fact]
-    public void TransformSentence_MultipleWords_JoinsWithSpaces()
+    public void Transform_PreservesConsonants()
+    {
+        // Non-triggering consonants are preserved
+        var phonemes = new[] { Phoneme.K, Phoneme.AE, Phoneme.T };
+        var result = _transformer.Transform(phonemes);
+
+        result.Should().Contain("k");
+        result.Should().Contain("t");
+    }
+
+    [Fact]
+    public void TransformSentence_JoinsWithSpaces()
     {
         var sentence = new List<IReadOnlyList<Phoneme>>
         {
-            new[] { Phoneme.AH },  // short vowel -> nya~
-            new[] { Phoneme.OW }   // long vowel -> nyaa~
+            new[] { Phoneme.AE },  // A-type vowel
+            new[] { Phoneme.Y, Phoneme.UW }  // you → mew
         };
 
         var result = _transformer.TransformSentence(sentence);
 
-        result.Should().Be("nya~ nyaa~");
+        result.Should().Contain(" ");
+        result.Should().Contain("nya");
+        result.Should().Contain("mew");
     }
 }

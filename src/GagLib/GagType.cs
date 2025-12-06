@@ -21,6 +21,11 @@ public enum GagType
     DogGag,
 
     /// <summary>
+    /// Barking dog gag - transforms speech into barks (ruff, woof, arf, bark, grr).
+    /// </summary>
+    BarkingDogGag,
+
+    /// <summary>
     /// Catgirl gag - anime catgirl speech (nya~).
     /// </summary>
     CatgirlGag

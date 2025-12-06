@@ -11,6 +11,7 @@ public class GagTests
         [GagType.BallGag],
         [GagType.CowGag],
         [GagType.DogGag],
+        [GagType.BarkingDogGag],
         [GagType.CatgirlGag]
     ];
 
@@ -171,19 +172,44 @@ public class GagTests
     }
 
     [Fact]
-    public void Transform_CatgirlGag_ReturnsNyaSounds()
+    public void Transform_BarkingDogGag_ReturnsDogSounds()
     {
-        var result = Gag.Transform(GagType.CatgirlGag, "hello");
+        var result = Gag.Transform(GagType.BarkingDogGag, "hello world");
 
+        // Should contain at least one dog sound
+        var hasDogSound = result.Contains("ruff") ||
+                          result.Contains("woof") ||
+                          result.Contains("arf") ||
+                          result.Contains("bark") ||
+                          result.Contains("grr");
+        hasDogSound.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Transform_BarkingDogGag_GrowlyWord_AddsGrr()
+    {
+        // "great" has R and G - should trigger grr
+        var result = Gag.Transform(GagType.BarkingDogGag, "great");
+
+        result.Should().Contain("grr");
+    }
+
+    [Fact]
+    public void Transform_CatgirlGag_TransformsMagic()
+    {
+        var result = Gag.Transform(GagType.CatgirlGag, "magic");
+
+        // M + A-vowel pattern → nya
         result.Should().Contain("nya");
     }
 
     [Fact]
-    public void Transform_CatgirlGag_EndsWithTilde()
+    public void Transform_CatgirlGag_TransformsYou()
     {
-        var result = Gag.Transform(GagType.CatgirlGag, "hello");
+        var result = Gag.Transform(GagType.CatgirlGag, "you");
 
-        result.Should().EndWith("~");
+        // Y + U-vowel → mew
+        result.Should().Contain("mew");
     }
 
     [Fact]
@@ -194,13 +220,18 @@ public class GagTests
         var ball = Gag.Transform(GagType.BallGag, input);
         var cow = Gag.Transform(GagType.CowGag, input);
         var dog = Gag.Transform(GagType.DogGag, input);
+        var barkingDog = Gag.Transform(GagType.BarkingDogGag, input);
         var catgirl = Gag.Transform(GagType.CatgirlGag, input);
 
         ball.Should().NotBe(cow);
         ball.Should().NotBe(dog);
+        ball.Should().NotBe(barkingDog);
         ball.Should().NotBe(catgirl);
         cow.Should().NotBe(dog);
+        cow.Should().NotBe(barkingDog);
         cow.Should().NotBe(catgirl);
+        dog.Should().NotBe(barkingDog);
         dog.Should().NotBe(catgirl);
+        barkingDog.Should().NotBe(catgirl);
     }
 }
