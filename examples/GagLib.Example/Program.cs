@@ -26,7 +26,11 @@ var gagType = choice switch
     _ => GagType.BallGag
 };
 
-Console.WriteLine($"\nUsing: {gagType}");
+Console.Write("\nSeverity (0.0-1.0, default 1.0): ");
+var severityInput = Console.ReadLine();
+var severity = float.TryParse(severityInput, out var s) ? s : 1.0f;
+
+Console.WriteLine($"\nUsing: {gagType} at {severity:P0} severity");
 Console.WriteLine("Type a message and see it transformed.");
 Console.WriteLine("Type 'quit' to exit.\n");
 
@@ -41,7 +45,7 @@ while (true)
     if (input.Equals("quit", StringComparison.OrdinalIgnoreCase))
         break;
 
-    var gagged = Gag.Transform(gagType, input);
+    var gagged = Gag.Transform(gagType, input, severity);
     Console.WriteLine($"Gagged: {gagged}\n");
 }
 
