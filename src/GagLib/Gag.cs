@@ -30,10 +30,27 @@ public static class Gag
     /// </summary>
     /// <param name="gagType">The type of gag to apply.</param>
     /// <param name="message">The message to transform.</param>
+    /// <param name="severity">How much of the text to transform (0.0 = none, 1.0 = all). Default is 1.0.</param>
     /// <returns>The gagged message with preserved formatting.</returns>
-    public static string Transform(GagType gagType, string message)
+    public static string Transform(GagType gagType, string message, float severity = 1.0f)
+        => Transform(gagType, message, severity, Random.Shared);
+
+    /// <summary>
+    /// Transforms a message as if spoken through a gag, with a specified random source.
+    /// </summary>
+    /// <param name="gagType">The type of gag to apply.</param>
+    /// <param name="message">The message to transform.</param>
+    /// <param name="severity">How much of the text to transform (0.0 = none, 1.0 = all).</param>
+    /// <param name="random">Random source for severity selection (useful for deterministic testing).</param>
+    /// <returns>The gagged message with preserved formatting.</returns>
+    public static string Transform(GagType gagType, string message, float severity, Random random)
     {
         if (string.IsNullOrEmpty(message))
+            return message;
+
+        severity = Math.Clamp(severity, 0f, 1f);
+
+        if (severity == 0f)
             return message;
 
         if (!Transformers.TryGetValue(gagType, out var transformer))
@@ -43,13 +60,13 @@ public static class Gag
 
         return transformer switch
         {
-            ITextBasedGagTransformer t => BuildOutputTextBased(tokens, t),
-            IGagTransformer t => BuildOutputPhonemeBased(tokens, t),
+            ITextBasedGagTransformer t => BuildOutputTextBased(tokens, t, severity, random),
+            IGagTransformer t => BuildOutputPhonemeBased(tokens, t, severity, random),
             _ => throw new InvalidOperationException($"Unknown transformer type: {transformer.GetType()}")
         };
     }
 
-    private static string BuildOutputPhonemeBased(IReadOnlyList<TextToken> tokens, IGagTransformer transformer)
+    private static string BuildOutputPhonemeBased(IReadOnlyList<TextToken> tokens, IGagTransformer transformer, float severity, Random random)
     {
         // Collect word phonemes for sentence-level transformation
         var wordPhonemes = new List<IReadOnlyList<Phoneme>>();
@@ -81,10 +98,11 @@ public static class Gag
             }
             else if (token.Phonemes != null && token.Phonemes.Count > 0)
             {
-                // Use pre-transformed word
                 if (wordIdx < transformedWords.Length)
                 {
-                    result.Append(transformedWords[wordIdx]);
+                    // Apply severity: randomly choose transformed or original per word
+                    var useTransformed = severity >= 1f || random.NextDouble() < severity;
+                    result.Append(useTransformed ? transformedWords[wordIdx] : token.OriginalText);
                     wordIdx++;
                 }
             }
@@ -98,7 +116,7 @@ public static class Gag
         return result.ToString();
     }
 
-    private static string BuildOutputTextBased(IReadOnlyList<TextToken> tokens, ITextBasedGagTransformer transformer)
+    private static string BuildOutputTextBased(IReadOnlyList<TextToken> tokens, ITextBasedGagTransformer transformer, float severity, Random random)
     {
         // Collect words with original text for text-based transformation
         var words = new List<(string OriginalText, IReadOnlyList<Phoneme>? Phonemes)>();
@@ -129,7 +147,9 @@ public static class Gag
             {
                 if (wordIdx < transformedWords.Length)
                 {
-                    result.Append(transformedWords[wordIdx]);
+                    // Apply severity: randomly choose transformed or original per word
+                    var useTransformed = severity >= 1f || random.NextDouble() < severity;
+                    result.Append(useTransformed ? transformedWords[wordIdx] : token.OriginalText);
                     wordIdx++;
                 }
             }

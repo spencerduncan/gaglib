@@ -294,4 +294,81 @@ public class GagTests
         // R and L should become W
         result.Should().Contain("w");
     }
+
+    // Severity tests
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_SeverityZero_ReturnsOriginal(GagType gagType)
+    {
+        var input = "hello world";
+        var result = Gag.Transform(gagType, input, 0f);
+
+        result.Should().Be(input);
+    }
+
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_SeverityOne_TransformsAll(GagType gagType)
+    {
+        var input = "hello";
+        var result = Gag.Transform(gagType, input, 1f);
+
+        // Should be fully transformed (same as default behavior)
+        result.Should().NotBe(input);
+    }
+
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_SeverityDefault_TransformsAll(GagType gagType)
+    {
+        var input = "hello";
+
+        // Default severity should be 1.0
+        var withDefault = Gag.Transform(gagType, input);
+        var withExplicit = Gag.Transform(gagType, input, 1f);
+
+        // Both should transform (not equal to input)
+        withDefault.Should().NotBe(input);
+        withExplicit.Should().NotBe(input);
+    }
+
+    [Fact]
+    public void Transform_SeverityHalf_TransformsSomeWords()
+    {
+        // Use seeded random for deterministic test
+        var input = "one two three four five six seven eight nine ten";
+        var random = new Random(42);
+
+        var result = Gag.Transform(GagType.CowGag, input, 0.5f, random);
+
+        // With seed 42 and 0.5 severity, we expect a mix of transformed and original
+        var hasMoo = result.Contains("moo");
+        var hasOriginal = result.Contains("one") || result.Contains("two") ||
+                          result.Contains("three") || result.Contains("four") ||
+                          result.Contains("five") || result.Contains("six");
+
+        hasMoo.Should().BeTrue("Some words should be transformed");
+        hasOriginal.Should().BeTrue("Some words should remain original");
+    }
+
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_SeverityNegative_ClampsToZero(GagType gagType)
+    {
+        var input = "hello world";
+        var result = Gag.Transform(gagType, input, -0.5f);
+
+        result.Should().Be(input);
+    }
+
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_SeverityOverOne_ClampsToOne(GagType gagType)
+    {
+        var input = "hello";
+        var result = Gag.Transform(gagType, input, 1.5f);
+
+        // Should be fully transformed
+        result.Should().NotBe(input);
+    }
 }
