@@ -18,5 +18,10 @@ public enum GagType
     /// <summary>
     /// Dog gag - cartoon dog style speech (ruh-roh!).
     /// </summary>
-    DogGag
+    DogGag,
+
+    /// <summary>
+    /// Catgirl gag - anime catgirl speech (nya~).
+    /// </summary>
+    CatgirlGag
 }
