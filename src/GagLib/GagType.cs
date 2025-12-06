@@ -33,5 +33,10 @@ public enum GagType
     /// <summary>
     /// Cat gag - transforms speech into meow sounds.
     /// </summary>
-    CatGag
+    CatGag,
+
+    /// <summary>
+    /// Uwu gag - transforms speech into Uwu language patterns.
+    /// </summary>
+    UwuGag
 }

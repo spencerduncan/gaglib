@@ -13,7 +13,8 @@ public class GagTests
         [GagType.DogGag],
         [GagType.BarkingDogGag],
         [GagType.CatgirlGag],
-        [GagType.CatGag]
+        [GagType.CatGag],
+        [GagType.UwuGag]
     ];
 
     [Theory]
@@ -222,6 +223,15 @@ public class GagTests
     }
 
     [Fact]
+    public void Transform_UwuGag_TransformsToUwuStyle()
+    {
+        var result = Gag.Transform(GagType.UwuGag, "hello");
+
+        // R and L become w, nasals become ny
+        result.Should().Contain("w");
+    }
+
+    [Fact]
     public void Transform_AllGagTypes_ProduceDifferentOutput()
     {
         var input = "hello";
@@ -232,21 +242,28 @@ public class GagTests
         var barkingDog = Gag.Transform(GagType.BarkingDogGag, input);
         var catgirl = Gag.Transform(GagType.CatgirlGag, input);
         var cat = Gag.Transform(GagType.CatGag, input);
+        var uwu = Gag.Transform(GagType.UwuGag, input);
 
         ball.Should().NotBe(cow);
         ball.Should().NotBe(dog);
         ball.Should().NotBe(barkingDog);
         ball.Should().NotBe(catgirl);
         ball.Should().NotBe(cat);
+        ball.Should().NotBe(uwu);
         cow.Should().NotBe(dog);
         cow.Should().NotBe(barkingDog);
         cow.Should().NotBe(catgirl);
         cow.Should().NotBe(cat);
+        cow.Should().NotBe(uwu);
         dog.Should().NotBe(barkingDog);
         dog.Should().NotBe(catgirl);
         dog.Should().NotBe(cat);
+        dog.Should().NotBe(uwu);
         barkingDog.Should().NotBe(catgirl);
         barkingDog.Should().NotBe(cat);
+        barkingDog.Should().NotBe(uwu);
         catgirl.Should().NotBe(cat);
+        catgirl.Should().NotBe(uwu);
+        cat.Should().NotBe(uwu);
     }
 }
