@@ -8,5 +8,10 @@ public enum GagType
     /// <summary>
     /// Ball gag - blocks mouth, forces nasal sounds.
     /// </summary>
-    BallGag
+    BallGag,
+
+    /// <summary>
+    /// Cow gag - transforms speech into moo sounds.
+    /// </summary>
+    CowGag
 }
