@@ -120,4 +120,45 @@ public class GagTests
         result.Should().NotBeEmpty();
         result.Should().NotBe("blorphington");
     }
+
+    [Fact]
+    public void Transform_CowGag_ReturnsMooSounds()
+    {
+        var result = Gag.Transform(GagType.CowGag, "hello");
+
+        result.Should().Contain("moo");
+        result.Should().NotBe("hello");
+    }
+
+    [Fact]
+    public void Transform_CowGag_PreservesPunctuation()
+    {
+        var result = Gag.Transform(GagType.CowGag, "hello, world!");
+
+        result.Should().Contain(",");
+        result.Should().Contain("!");
+        result.Should().Contain("moo");
+    }
+
+    [Fact]
+    public void Transform_CowGag_PreservesDiscordEmbed()
+    {
+        var result = Gag.Transform(GagType.CowGag, "hey <@123>");
+
+        result.Should().Contain("<@123>");
+        result.Should().Contain("moo");
+    }
+
+    [Fact]
+    public void Transform_DifferentGagTypes_ProduceDifferentOutput()
+    {
+        var input = "hello world";
+
+        var ballGag = Gag.Transform(GagType.BallGag, input);
+        var cowGag = Gag.Transform(GagType.CowGag, input);
+
+        ballGag.Should().NotBe(cowGag);
+        ballGag.Should().NotContain("moo");
+        cowGag.Should().Contain("moo");
+    }
 }
