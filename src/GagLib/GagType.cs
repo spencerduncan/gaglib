@@ -28,5 +28,10 @@ public enum GagType
     /// <summary>
     /// Catgirl gag - anime catgirl speech (nya~).
     /// </summary>
-    CatgirlGag
+    CatgirlGag,
+
+    /// <summary>
+    /// Cat gag - transforms speech into meow sounds.
+    /// </summary>
+    CatGag
 }

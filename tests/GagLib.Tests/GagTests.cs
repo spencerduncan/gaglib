@@ -12,7 +12,8 @@ public class GagTests
         [GagType.CowGag],
         [GagType.DogGag],
         [GagType.BarkingDogGag],
-        [GagType.CatgirlGag]
+        [GagType.CatgirlGag],
+        [GagType.CatGag]
     ];
 
     [Theory]
@@ -213,6 +214,14 @@ public class GagTests
     }
 
     [Fact]
+    public void Transform_CatGag_ReturnsMeowSounds()
+    {
+        var result = Gag.Transform(GagType.CatGag, "hello");
+
+        result.Should().Contain("meow");
+    }
+
+    [Fact]
     public void Transform_AllGagTypes_ProduceDifferentOutput()
     {
         var input = "hello";
@@ -222,16 +231,22 @@ public class GagTests
         var dog = Gag.Transform(GagType.DogGag, input);
         var barkingDog = Gag.Transform(GagType.BarkingDogGag, input);
         var catgirl = Gag.Transform(GagType.CatgirlGag, input);
+        var cat = Gag.Transform(GagType.CatGag, input);
 
         ball.Should().NotBe(cow);
         ball.Should().NotBe(dog);
         ball.Should().NotBe(barkingDog);
         ball.Should().NotBe(catgirl);
+        ball.Should().NotBe(cat);
         cow.Should().NotBe(dog);
         cow.Should().NotBe(barkingDog);
         cow.Should().NotBe(catgirl);
+        cow.Should().NotBe(cat);
         dog.Should().NotBe(barkingDog);
         dog.Should().NotBe(catgirl);
+        dog.Should().NotBe(cat);
         barkingDog.Should().NotBe(catgirl);
+        barkingDog.Should().NotBe(cat);
+        catgirl.Should().NotBe(cat);
     }
 }
