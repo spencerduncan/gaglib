@@ -13,6 +13,7 @@ public static class Gag
     private static readonly TextProcessor Processor = TextProcessor.CreateDefault();
     private static readonly BallGagTransformer BallGag = new();
     private static readonly CowGagTransformer CowGag = new();
+    private static readonly DogGagTransformer DogGag = new();
 
     /// <summary>
     /// Transforms a message as if spoken through a gag.
@@ -38,6 +39,7 @@ public static class Gag
         {
             GagType.BallGag => BallGag,
             GagType.CowGag => CowGag,
+            GagType.DogGag => DogGag,
             _ => throw new ArgumentOutOfRangeException(nameof(gagType), gagType, "Unknown gag type")
         };
     }

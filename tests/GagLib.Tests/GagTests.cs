@@ -161,4 +161,46 @@ public class GagTests
         ballGag.Should().NotContain("moo");
         cowGag.Should().Contain("moo");
     }
+
+    [Fact]
+    public void Transform_DogGag_AddsRSounds()
+    {
+        var result = Gag.Transform(GagType.DogGag, "hello");
+
+        result.Should().StartWith("r");
+        result.Should().NotBe("hello");
+    }
+
+    [Fact]
+    public void Transform_DogGag_PreservesPunctuation()
+    {
+        var result = Gag.Transform(GagType.DogGag, "uh oh!");
+
+        result.Should().Contain("!");
+        result.Should().Contain("ruh");
+        result.Should().Contain("roh");
+    }
+
+    [Fact]
+    public void Transform_DogGag_PreservesDiscordEmbed()
+    {
+        var result = Gag.Transform(GagType.DogGag, "hey <@123>");
+
+        result.Should().Contain("<@123>");
+        result.Should().StartWith("r");
+    }
+
+    [Fact]
+    public void Transform_AllGagTypes_ProduceDifferentOutput()
+    {
+        var input = "hello";
+
+        var ball = Gag.Transform(GagType.BallGag, input);
+        var cow = Gag.Transform(GagType.CowGag, input);
+        var dog = Gag.Transform(GagType.DogGag, input);
+
+        ball.Should().NotBe(cow);
+        ball.Should().NotBe(dog);
+        cow.Should().NotBe(dog);
+    }
 }
