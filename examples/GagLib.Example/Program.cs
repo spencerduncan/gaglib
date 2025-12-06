@@ -8,6 +8,7 @@ Console.WriteLine("  2. Cow Gag");
 Console.WriteLine("  3. Dog Gag (ruh-roh!)");
 Console.WriteLine("  4. Barking Dog Gag (ruff woof grr!)");
 Console.WriteLine("  5. Catgirl Gag (nya~)");
+Console.WriteLine("  6. Cat Gag (meow!)");
 Console.Write("\nChoice: ");
 
 var choice = Console.ReadLine();
@@ -17,6 +18,7 @@ var gagType = choice switch
     "3" => GagType.DogGag,
     "4" => GagType.BarkingDogGag,
     "5" => GagType.CatgirlGag,
+    "6" => GagType.CatGag,
     _ => GagType.BallGag
 };
 
