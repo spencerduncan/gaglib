@@ -10,7 +10,8 @@ public class GagTests
     [
         [GagType.BallGag],
         [GagType.CowGag],
-        [GagType.DogGag]
+        [GagType.DogGag],
+        [GagType.BarkingDogGag]
     ];
 
     [Theory]
@@ -170,6 +171,29 @@ public class GagTests
     }
 
     [Fact]
+    public void Transform_BarkingDogGag_ReturnsDogSounds()
+    {
+        var result = Gag.Transform(GagType.BarkingDogGag, "hello world");
+
+        // Should contain at least one dog sound
+        var hasDogSound = result.Contains("ruff") ||
+                          result.Contains("woof") ||
+                          result.Contains("arf") ||
+                          result.Contains("bark") ||
+                          result.Contains("grr");
+        hasDogSound.Should().BeTrue();
+    }
+
+    [Fact]
+    public void Transform_BarkingDogGag_GrowlyWord_AddsGrr()
+    {
+        // "great" has R and G - should trigger grr
+        var result = Gag.Transform(GagType.BarkingDogGag, "great");
+
+        result.Should().Contain("grr");
+    }
+
+    [Fact]
     public void Transform_AllGagTypes_ProduceDifferentOutput()
     {
         var input = "hello";
@@ -177,9 +201,13 @@ public class GagTests
         var ball = Gag.Transform(GagType.BallGag, input);
         var cow = Gag.Transform(GagType.CowGag, input);
         var dog = Gag.Transform(GagType.DogGag, input);
+        var barkingDog = Gag.Transform(GagType.BarkingDogGag, input);
 
         ball.Should().NotBe(cow);
         ball.Should().NotBe(dog);
+        ball.Should().NotBe(barkingDog);
         cow.Should().NotBe(dog);
+        cow.Should().NotBe(barkingDog);
+        dog.Should().NotBe(barkingDog);
     }
 }
