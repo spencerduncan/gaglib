@@ -38,5 +38,10 @@ public enum GagType
     /// <summary>
     /// Uwu gag - transforms speech into Uwu language patterns.
     /// </summary>
-    UwuGag
+    UwuGag,
+
+    /// <summary>
+    /// Furry gag - transforms text into furry/OwO speak style.
+    /// </summary>
+    FurryGag
 }

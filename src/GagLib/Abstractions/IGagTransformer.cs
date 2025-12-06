@@ -3,13 +3,8 @@ namespace GagLib.Abstractions;
 /// <summary>
 /// Transforms phoneme sequences into gagged/muffled text output.
 /// </summary>
-public interface IGagTransformer
+public interface IGagTransformer : IGagTransformerBase
 {
-    /// <summary>
-    /// Gets the display name of this gag type.
-    /// </summary>
-    string Name { get; }
-
     /// <summary>
     /// Transforms a sequence of phonemes into gagged text.
     /// </summary>
