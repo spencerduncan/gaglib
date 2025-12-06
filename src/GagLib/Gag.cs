@@ -11,13 +11,18 @@ namespace GagLib;
 public static class Gag
 {
     private static readonly TextProcessor Processor = TextProcessor.CreateDefault();
-    private static readonly BallGagTransformer BallGag = new();
-    private static readonly CowGagTransformer CowGag = new();
-    private static readonly DogGagTransformer DogGag = new();
-    private static readonly BarkingDogGagTransformer BarkingDogGag = new();
-    private static readonly CatgirlGagTransformer CatgirlGag = new();
-    private static readonly CatGagTransformer CatGag = new();
-    private static readonly UwuGagTransformer UwuGag = new();
+
+    private static readonly Dictionary<GagType, IGagTransformerBase> Transformers = new()
+    {
+        [GagType.BallGag] = new BallGagTransformer(),
+        [GagType.CowGag] = new CowGagTransformer(),
+        [GagType.DogGag] = new DogGagTransformer(),
+        [GagType.BarkingDogGag] = new BarkingDogGagTransformer(),
+        [GagType.CatgirlGag] = new CatgirlGagTransformer(),
+        [GagType.CatGag] = new CatGagTransformer(),
+        [GagType.UwuGag] = new UwuGagTransformer(),
+        [GagType.FurryGag] = new FurryGagTransformer(),
+    };
 
     /// <summary>
     /// Transforms a message as if spoken through a gag.
@@ -31,28 +36,20 @@ public static class Gag
         if (string.IsNullOrEmpty(message))
             return message;
 
-        var transformer = GetTransformer(gagType);
+        if (!Transformers.TryGetValue(gagType, out var transformer))
+            throw new ArgumentOutOfRangeException(nameof(gagType), gagType, "Unknown gag type");
+
         var tokens = Processor.Process(message);
 
-        return BuildOutput(tokens, transformer);
-    }
-
-    private static IGagTransformer GetTransformer(GagType gagType)
-    {
-        return gagType switch
+        return transformer switch
         {
-            GagType.BallGag => BallGag,
-            GagType.CowGag => CowGag,
-            GagType.DogGag => DogGag,
-            GagType.BarkingDogGag => BarkingDogGag,
-            GagType.CatgirlGag => CatgirlGag,
-            GagType.CatGag => CatGag,
-            GagType.UwuGag => UwuGag,
-            _ => throw new ArgumentOutOfRangeException(nameof(gagType), gagType, "Unknown gag type")
+            ITextBasedGagTransformer t => BuildOutputTextBased(tokens, t),
+            IGagTransformer t => BuildOutputPhonemeBased(tokens, t),
+            _ => throw new InvalidOperationException($"Unknown transformer type: {transformer.GetType()}")
         };
     }
 
-    private static string BuildOutput(IReadOnlyList<TextToken> tokens, IGagTransformer transformer)
+    private static string BuildOutputPhonemeBased(IReadOnlyList<TextToken> tokens, IGagTransformer transformer)
     {
         // Collect word phonemes for sentence-level transformation
         var wordPhonemes = new List<IReadOnlyList<Phoneme>>();
@@ -95,6 +92,46 @@ public static class Gag
             {
                 // Word with no phonemes - keep original
                 result.Append(token.OriginalText);
+            }
+        }
+
+        return result.ToString();
+    }
+
+    private static string BuildOutputTextBased(IReadOnlyList<TextToken> tokens, ITextBasedGagTransformer transformer)
+    {
+        // Collect words with original text for text-based transformation
+        var words = new List<(string OriginalText, IReadOnlyList<Phoneme>? Phonemes)>();
+
+        foreach (var token in tokens)
+        {
+            if (token.Type == TextTokenType.Word)
+            {
+                words.Add((token.OriginalText, token.Phonemes));
+            }
+        }
+
+        // Transform at sentence level (handles uwu/owo insertion, emoticons, etc.)
+        var transformedSentence = transformer.TransformSentenceText(words);
+        var transformedWords = transformedSentence.Split(' ');
+
+        // Rebuild output interleaving transformed words with preserved tokens
+        var result = new System.Text.StringBuilder();
+        var wordIdx = 0;
+
+        foreach (var token in tokens)
+        {
+            if (token.Type == TextTokenType.Preserved)
+            {
+                result.Append(token.OriginalText);
+            }
+            else if (token.Type == TextTokenType.Word)
+            {
+                if (wordIdx < transformedWords.Length)
+                {
+                    result.Append(transformedWords[wordIdx]);
+                    wordIdx++;
+                }
             }
         }
 
