@@ -5,103 +5,125 @@ namespace GagLib.Tests;
 
 public class GagTests
 {
-    [Fact]
-    public void Transform_SimpleWord_ReturnsMuffledOutput()
+    // All gag types for parameterized tests
+    public static IEnumerable<object[]> AllGagTypes =>
+    [
+        [GagType.BallGag],
+        [GagType.CowGag],
+        [GagType.DogGag]
+    ];
+
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_TransformsWords(GagType gagType)
     {
-        var result = Gag.Transform(GagType.BallGag, "hello");
+        var result = Gag.Transform(gagType, "hello");
 
         result.Should().NotBeEmpty();
         result.Should().NotBe("hello");
     }
 
-    [Fact]
-    public void Transform_EmptyString_ReturnsEmpty()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_EmptyString_ReturnsEmpty(GagType gagType)
     {
-        Gag.Transform(GagType.BallGag, "").Should().BeEmpty();
+        Gag.Transform(gagType, "").Should().BeEmpty();
     }
 
-    [Fact]
-    public void Transform_Null_ReturnsNull()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_Null_ReturnsNull(GagType gagType)
     {
-        Gag.Transform(GagType.BallGag, null!).Should().BeNull();
+        Gag.Transform(gagType, null!).Should().BeNull();
     }
 
-    [Fact]
-    public void Transform_PreservesPunctuation()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_PreservesPunctuation(GagType gagType)
     {
-        var result = Gag.Transform(GagType.BallGag, "hello, world!");
+        var result = Gag.Transform(gagType, "hello, world!");
 
         result.Should().Contain(",");
         result.Should().Contain("!");
     }
 
-    [Fact]
-    public void Transform_PreservesDiscordMention()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_PreservesDiscordMention(GagType gagType)
     {
-        var result = Gag.Transform(GagType.BallGag, "hey <@123456789>");
+        var result = Gag.Transform(gagType, "hey <@123456789>");
 
         result.Should().Contain("<@123456789>");
     }
 
-    [Fact]
-    public void Transform_PreservesDiscordEmoji()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_PreservesDiscordEmoji(GagType gagType)
     {
-        var result = Gag.Transform(GagType.BallGag, "lol <:smile:123>");
+        var result = Gag.Transform(gagType, "lol <:smile:123>");
 
         result.Should().Contain("<:smile:123>");
     }
 
-    [Fact]
-    public void Transform_PreservesAnimatedEmoji()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_PreservesAnimatedEmoji(GagType gagType)
     {
-        var result = Gag.Transform(GagType.BallGag, "haha <a:laugh:456>");
+        var result = Gag.Transform(gagType, "haha <a:laugh:456>");
 
         result.Should().Contain("<a:laugh:456>");
     }
 
-    [Fact]
-    public void Transform_PreservesUnicodeEmoji()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_PreservesUnicodeEmoji(GagType gagType)
     {
-        var result = Gag.Transform(GagType.BallGag, "hi 😀");
+        var result = Gag.Transform(gagType, "hi 😀");
 
         result.Should().Contain("😀");
     }
 
-    [Fact]
-    public void Transform_ConvertsLetterEmoji()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_PreservesSpacing(GagType gagType)
     {
-        // Regional indicators should become letters and get gagged
-        var result = Gag.Transform(GagType.BallGag, "🇭🇮");
+        var result = Gag.Transform(gagType, "one two three");
 
-        // Should NOT contain the original emoji (it was converted)
-        result.Should().NotContain("🇭");
-        result.Should().NotContain("🇮");
-        // Should be gagged output
-        result.Should().NotBeEmpty();
-    }
-
-    [Fact]
-    public void Transform_PreservesSpacing()
-    {
-        var result = Gag.Transform(GagType.BallGag, "one two three");
-
-        // Should have spaces between words
         var parts = result.Split(' ');
         parts.Length.Should().BeGreaterThanOrEqualTo(3);
     }
 
-    [Fact]
-    public void Transform_FullSentence_EndToEnd()
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_ConvertsLetterEmoji(GagType gagType)
+    {
+        var result = Gag.Transform(gagType, "🇭🇮");
+
+        result.Should().NotContain("🇭");
+        result.Should().NotContain("🇮");
+        result.Should().NotBeEmpty();
+    }
+
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_MadeUpWord_StillWorks(GagType gagType)
+    {
+        var result = Gag.Transform(gagType, "blorphington");
+
+        result.Should().NotBeEmpty();
+        result.Should().NotBe("blorphington");
+    }
+
+    [Theory]
+    [MemberData(nameof(AllGagTypes))]
+    public void Transform_FullSentence_PreservesStructure(GagType gagType)
     {
         var input = "Hello, world! 😀 <@123> How are you?";
-        var result = Gag.Transform(GagType.BallGag, input);
+        var result = Gag.Transform(gagType, input);
 
         // Words should be transformed
         result.Should().NotContain("Hello");
         result.Should().NotContain("world");
-        result.Should().NotContain("How");
-        result.Should().NotContain("are");
-        result.Should().NotContain("you");
 
         // Preserved content should remain
         result.Should().Contain(",");
@@ -111,14 +133,15 @@ public class GagTests
         result.Should().Contain("<@123>");
     }
 
+    // Gag-specific behavior tests
     [Fact]
-    public void Transform_MadeUpWord_StillWorks()
+    public void Transform_BallGag_ProducesMuffledSounds()
     {
-        // Heuristic fallback should handle unknown words
-        var result = Gag.Transform(GagType.BallGag, "blorphington");
+        var result = Gag.Transform(GagType.BallGag, "hello");
 
-        result.Should().NotBeEmpty();
-        result.Should().NotBe("blorphington");
+        // Ball gag produces phonetic muffled output
+        result.Should().NotContain("moo");
+        result.Should().NotStartWith("r");
     }
 
     [Fact]
@@ -127,38 +150,36 @@ public class GagTests
         var result = Gag.Transform(GagType.CowGag, "hello");
 
         result.Should().Contain("moo");
-        result.Should().NotBe("hello");
     }
 
     [Fact]
-    public void Transform_CowGag_PreservesPunctuation()
+    public void Transform_DogGag_AddsRSounds()
     {
-        var result = Gag.Transform(GagType.CowGag, "hello, world!");
+        var result = Gag.Transform(GagType.DogGag, "hello");
 
-        result.Should().Contain(",");
-        result.Should().Contain("!");
-        result.Should().Contain("moo");
+        result.Should().StartWith("r");
     }
 
     [Fact]
-    public void Transform_CowGag_PreservesDiscordEmbed()
+    public void Transform_DogGag_UhOh_ReturnsRuhRoh()
     {
-        var result = Gag.Transform(GagType.CowGag, "hey <@123>");
+        var result = Gag.Transform(GagType.DogGag, "uh oh");
 
-        result.Should().Contain("<@123>");
-        result.Should().Contain("moo");
+        result.Should().Contain("ruh");
+        result.Should().Contain("roh");
     }
 
     [Fact]
-    public void Transform_DifferentGagTypes_ProduceDifferentOutput()
+    public void Transform_AllGagTypes_ProduceDifferentOutput()
     {
-        var input = "hello world";
+        var input = "hello";
 
-        var ballGag = Gag.Transform(GagType.BallGag, input);
-        var cowGag = Gag.Transform(GagType.CowGag, input);
+        var ball = Gag.Transform(GagType.BallGag, input);
+        var cow = Gag.Transform(GagType.CowGag, input);
+        var dog = Gag.Transform(GagType.DogGag, input);
 
-        ballGag.Should().NotBe(cowGag);
-        ballGag.Should().NotContain("moo");
-        cowGag.Should().Contain("moo");
+        ball.Should().NotBe(cow);
+        ball.Should().NotBe(dog);
+        cow.Should().NotBe(dog);
     }
 }

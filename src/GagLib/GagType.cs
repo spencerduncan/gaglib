@@ -13,5 +13,10 @@ public enum GagType
     /// <summary>
     /// Cow gag - transforms speech into moo sounds.
     /// </summary>
-    CowGag
+    CowGag,
+
+    /// <summary>
+    /// Dog gag - cartoon dog style speech (ruh-roh!).
+    /// </summary>
+    DogGag
 }

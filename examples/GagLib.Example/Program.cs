@@ -5,10 +5,16 @@ Console.WriteLine("===========");
 Console.WriteLine("Select gag type:");
 Console.WriteLine("  1. Ball Gag");
 Console.WriteLine("  2. Cow Gag");
+Console.WriteLine("  3. Dog Gag (ruh-roh!)");
 Console.Write("\nChoice: ");
 
 var choice = Console.ReadLine();
-var gagType = choice == "2" ? GagType.CowGag : GagType.BallGag;
+var gagType = choice switch
+{
+    "2" => GagType.CowGag,
+    "3" => GagType.DogGag,
+    _ => GagType.BallGag
+};
 
 Console.WriteLine($"\nUsing: {gagType}");
 Console.WriteLine("Type a message and see it transformed.");
